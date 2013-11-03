@@ -173,7 +173,7 @@ function discardCard(numCard){
 	}
 	
 	update_hand();
-	//send_event(EVENT_PUT_CARD, card);
+	send_event(EVENT_PUT_CARD, card);
 	end_turn();
 }
 
