@@ -1,23 +1,61 @@
+//globals
 var knocked = false;
 var ws = new WebSocket("ws://localhost:8080/ThirtyOnes/App");
 var dbg = true;
 var card1, card2, card3, card4;
 
+
+//constants
 var EMPTY = "empty";
 var KNOCKED = "Knocked";
 
 //SERVER EVENTS
-var EVNT_KNOCK = "KNOCK";
-var EVNT_GET_CARD = "GET_CARD"; 
-var EVNT_PUT_CARD = "PUT_CARD";
+var EVENT_KNOCK = "KNOCK";
+var EVENT_GET_CARD = "GET_CARD"; 
+var EVENT_PUT_CARD = "PUT_CARD";
 
 //CLIENT EVENTS
-var EVNT_BEGIN_GAME = "BEGIN_GAME";
-var EVNT_START_TURN = "START_TURN";
-var EVNT_CARD = "CARD";
-var EVNT_END_GAME = "END_GAME";
-var EVNT_KNOCKED = "KNOCKED";
+var EVENT_BEGIN_GAME = "BEGIN_GAME";
+var EVENT_START_TURN = "START_TURN";
+var EVENT_CARD = "CARD";
+var EVENT_END_GAME = "END_GAME";
+var EVENT_KNOCKED = "KNOCKED";
 
+/*
+ * went event is received dispatch appropriate handler
+ */
+ws.onmessage = function(message){
+    o = JSON.parse(message);
+    if(dbg){
+		debug(o.eventName);
+	}
+	event = o.eventName;
+	
+	if(event == EVNT_BEGIN_GAME){
+		begin_game(o.data);
+	}
+	else if (event == EVENT_START_TURN){
+		start_turn();
+	}
+	else if (event == EVENT_CARD){
+		get_card(o.data);
+	}
+	else if (event == EVENT_END_GAME){
+		end_game(o.data);
+	}
+	else if (event == EVENT_KNOCKED){
+		knocked();
+	}
+	else{
+		alert("unknown event: " + event);
+	}
+};
+
+/*
+ * handles EVENT_START_TURN
+ * 
+ * enables card selection buttons
+ */
 function start_turn(){
 	if(dbg){
 		debug("Start turn");
@@ -30,33 +68,11 @@ function start_turn(){
 	}
 }
 
-ws.onmessage = function(message){
-    o = JSON.parse(message);
-    if(dbg){
-		debug(o.eventName);
-	}
-	event = o.eventName;
-	
-	if(event == EVNT_BEGIN_NAME){
-		begin_game(o.data);
-	}
-	else if (event == EVNT_START_TURN){
-		start_turn();
-	}
-	else if (event == EVNT_CARD){
-		get_card(o.data);
-	}
-	else if (event == EVNT_END_GAME){
-		end_game(o.data);
-	}
-	else if (event == EVNT_KNOCKED){
-		knocked();
-	}
-	else{
-		alert("unknown event: " + event);
-	}
-};
 
+/*
+ * takes and event name string and a data object
+ * wraps data in JSON and sends as message to websocket
+ */
 function send_event(event, data){
 
 	var o = new Object();
@@ -67,6 +83,9 @@ function send_event(event, data){
 }
 
 
+/*
+ * Disables buttons, and updates UI
+ */
 function end_turn(){
 	if(dbg){
 		debug("ending turn");
@@ -78,6 +97,10 @@ function end_turn(){
 	}
 }
 
+
+/*
+ * One a card had been selected enable discard buttons
+ */
 function enable_discard(){
 	if(dbg){
 		debug("enable discard");
@@ -88,15 +111,24 @@ function enable_discard(){
 	}
 }
 
+
+/*
+ * Dispatches EVENT_KNOCK
+ * sends event and ends turn
+ */
 function knock(){
 	if(dbg){
 		debug("Knocking");
 	}
 	knocked = true;
-	//send_event(EVNT_KNOCK,"")
+	send_event(EVENT_KNOCK,"")
 	end_turn();
 }
 
+
+/*
+ * Handles EVENT_KNOCKED
+ */
 function knocked(){
 	if(dbg){
 		debug("Knocked");
@@ -105,6 +137,11 @@ function knocked(){
 	end_turn();
 }
 
+
+/*
+ * Dispatches EVENT_PUT_CARD
+ * updates card objects and updates UI
+ */
 function discardCard(numCard){
 	if(dbg){
 		debug("Discarding card " + numCard );
@@ -133,10 +170,15 @@ function discardCard(numCard){
 	}
 	
 	update_hand();
-	//send_event(EVNT_PUT_CARD, card);
+	//send_event(EVENT_PUT_CARD, card);
 	end_turn();
 }
 
+
+/*
+ * handles EVENT_CARD
+ * addes new card object in slot 4
+ */
 function get_card(newCard){
     if(dbg){
 		debug("Get card");
@@ -146,20 +188,37 @@ function get_card(newCard){
 	enable_discard();
 }
 
+
+/*
+ * handles EVENT_END_GAME
+ */
 function endGame(msg){
 	document.getElementById("lblknock").innerHTML = msg;
 	ws.close();
 }
 
-function selectCard(num){
-	send_event(EVNT_GET_CARD,num);
+
+/*
+ * dispatch EVENT_GET_CARD
+ * @param fromDeck (boolean) which pile to get card from
+ * false = discard pile
+ * true = from deck
+ *              
+ */
+function selectCard(fromDeck){
+	send_event(EVENT_GET_CARD,fromDeck);
 }
 
+
+/*
+ * handles EVENT_BEGIN_GAME
+ * @param cards - JS array of 3 cards
+ */
 function begin_game(cards){
 	if(dbg){
 		debug("Begin game");
 	}
-	cards = JSON.parse(cards);
+	//cards = JSON.parse(cards);
 	card1 = cards[0];
 	card2 = cards[1];
 	card3 = cards[2];
@@ -167,6 +226,10 @@ function begin_game(cards){
 	update_hand();
 }
 
+
+/*
+ * redraw the UI
+ */
 function update_hand(){
 	if(dbg){
 		debug("updating display");
@@ -186,17 +249,13 @@ function update_hand(){
 	}
 }
 
+
+/*
+ * Constructor for card object
+ */
 function card(suitIn, valueIn){
 	this.suit = suitIn;
 	this.value = valueIn;
-}
-
-function sendEvent(evtName, data){
-	var o = new Object();
-	o.eventName = evtName;
-	o.data;
-	e = JSON.stringify(o);
-	
 }
 
 
@@ -222,6 +281,10 @@ function test(){
 	//alert(obj.suit);
 }
 
+
+/*
+ * If global debug is true print debug messages
+ */
 function debug(msg){
 	if(dbg){
 		alert(msg);
