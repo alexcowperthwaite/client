@@ -79,7 +79,7 @@ function start_turn(){
 function send_event(event, data){
 
 	var o = new Object();
-	o.eventName = event;
+	o.eventType = event;
 	o.data = data
 	var str = JSON.stringify(o);
 	ws.send(str);
