@@ -4,7 +4,7 @@
         <meta charset=UTF-8>
         <title>Tomcat WebSocket Chat</title>
         <script>
-            var ws = new WebSocket("ws://192.168.0.12:8080/ThirtyOnes/App");
+            var ws = new WebSocket("ws://192.168.0.12:8080/Chat/WsChatServlet");
             ws.onopen = function(){
             };
             ws.onmessage = function(message){

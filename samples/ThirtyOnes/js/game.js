@@ -25,11 +25,14 @@ var EVENT_KNOCKED = "KNOCKED";
  * went event is received dispatch appropriate handler
  */
 ws.onmessage = function(message){
+	if(message.data == ""){
+		return;
+	}
     o = JSON.parse(message.data);
     if(dbg){
-		debug(o.eventName);
+		debug(o.eventType);
 	}
-	event = o.eventName;
+	event = o.eventType;
 	
 	if(event == EVENT_BEGIN_GAME){
 		begin_game(o.data);
