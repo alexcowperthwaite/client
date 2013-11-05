@@ -7,14 +7,16 @@
     </head>
     <body>
     	
-        <button type="submit" class="select actions" id="select1" disabled=true onClick="selectCard(false)">Select discard pile</button>
-    	<button type="submit" class="select actions" id="select2" disabled=true onClick="selectCard(true)">Select deck</button>
-    	<button type="submit" class="select actions" id="knock" disabled=true onClick="knock()">Knock</button>
+        <button type="submit" class="select actions" id="select1" disabled onClick="selectCard(false)">Select discard pile</button>
+    	<button type="submit" class="select actions" id="select2" disabled onClick="selectCard(true)">Select deck</button>
+    	<button type="submit" class="select actions" id="knock" disabled onClick="knock()">Knock</button>
     	<!--  <button type="submit" class="" id="test" onClick="test()">test</button>-->
     
     	<table border=1>
     		<thead>
-    			<td colspan="4" align="center">Your Hand</td>
+                <tr>
+    			     <th colspan="4" align="center">Your Hand</th>
+                </tr>
     		</thead>
     		<tr>
     			<td>Card1</td>
@@ -29,10 +31,10 @@
     			<td id="lblcard4"></td>
     		<tr>
     		<tr>
-    		    <td><button type="submit" class="discard actions" disabled=true id="discard1" onClick="discardCard(1)">Discard</button></td>
-    			<td><button type="submit" class="discard actions" disabled=true id="discard2" onClick="discardCard(2)">Discard</button></td>
-    			<td><button type="submit" class="discard actions" disabled=true id="discard3" onClick="discardCard(3)">Discard</button></td>
-    			<td><button type="submit" class="discard actions" disabled=true id="discard4" onClick="discardCard(4)">Discard</button></td>
+    		    <td><button type="submit" class="discard actions" disabled id="discard1" onClick="discardCard(1)">Discard</button></td>
+    			<td><button type="submit" class="discard actions" disabled id="discard2" onClick="discardCard(2)">Discard</button></td>
+    			<td><button type="submit" class="discard actions" disabled id="discard3" onClick="discardCard(3)">Discard</button></td>
+    			<td><button type="submit" class="discard actions" disabled id="discard4" onClick="discardCard(4)">Discard</button></td>
     		<tr>    		
     	</table>
         <div id="lblknock"></div><br/>
